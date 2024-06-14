@@ -15,6 +15,3 @@ A simple Snake game using input.py for inputs
 
 # Input
 A file for keyboard inputs, it detects either QWERTY or AZERTY and sends the correct inputs back to the game
-
-# Save.txt
-The save file for Choice Game: contains the position in the dict so you don't start over each time.
