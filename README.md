@@ -4,8 +4,8 @@
 >I have taken some parts from other people who were kind enough to share them online but most of the scripts were written by me.
 
 # Choice Game
-Uses: dragons_story.py
-Creates: save.txt, error.log
+Uses: dragons_story.py <br>
+Creates: save.txt, error.log <br><br>
 Creates a pygame window with a story and buttons depending on what's in the dragons_story.py, (position, number of buttons with different choice, etc.)
 
 # Dragon Story
