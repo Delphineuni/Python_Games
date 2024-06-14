@@ -6,6 +6,7 @@ story = dragons_story.story
 current = story[1]
 but1_txt = current[1]
 but2_txt = current[2]
+position = 1
 
 # Structure for the story: dict {}, key is positional value (int), values is tuple of: Text on screen (mandatory), 
 # Text on button (at least one), 
@@ -15,14 +16,35 @@ but2_txt = current[2]
 # The script will write a file 'save.txt' with the key value so that it can be restarted where you left off
 
 
-try:
-    save = open('save.txt', "r+")
-    position = int(save.read())
-except IOError:
-    save = open('save.txt', 'w+')
-    position = 1
-except ValueError:
-    position = 1
+class filesave:
+    def retrievesave(self):
+        try:
+            with open('save.txt', 'r+') as save:
+                position = int(save.read())
+                list(story[position])
+        except FileNotFoundError:
+            with open('save.txt', 'w+') as save:
+                print('File not found, creating new save...')
+                position = 1
+                save.write(str(position))
+        except KeyError:
+            with open('save.txt', 'r+') as save:
+                print('invalid save value, resetting')
+                position = 1
+                save.truncate(0)
+                save.write(str(position))
+        finally:
+            return position
+    def saveposition(self,position):
+        try:
+            with open('save.txt', 'r+') as save:
+                save.seek(0)
+                save.write(str(position))
+        except IOError:
+            with open('save.txt', 'w+') as save:
+                save.truncate(0)
+                save.write(str(position))
+            
 
 pygame.init()
 size: list = [800,600]
@@ -124,10 +146,7 @@ def choice(position):
     screen.fill((0,0,0))
     txt_size(current[0])
     drawsprites(extrabuttons[::-1],button_txt[::-1])
-    save.seek(0)
-    save.write(str(position))
-
-
+    filesave().saveposition(position)
 
 def spriteadd(posx,text,pos):
     sprites.add(Button(pygame.Color('green'), 
@@ -150,6 +169,7 @@ def drawsprites(extrabuttons,button_txt):
         spriteadd(posx,text,pos)
 
 screen.fill((0,0,0))
+position = filesave().retrievesave()
 choice(position)
 pygame.display.update()
 
@@ -161,11 +181,9 @@ while True:
         
         if event.type == KEYUP:        
             if key[K_ESCAPE]:
-                save.close()  # type: ignore
                 pygame.quit()
                 sys.exit()
         if event.type == QUIT:
-            save.close() # type: ignore
             pygame.quit()
             sys.exit()
     
