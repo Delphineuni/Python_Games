@@ -1,4 +1,4 @@
-﻿import pygame, sys
+﻿import pygame, sys, datetime, logging
 from pygame.locals import *
 import dragons_story
 
@@ -14,35 +14,34 @@ position = 1
 # Since each Button has a text and a value, the scripts gets the number of buttons by dividing the length of tuple by two minus the text on screen
 # which allows for as many buttons as you want
 # The script will write a file 'save.txt' with the key value so that it can be restarted where you left off
+logging.basicConfig(filename='error.log', filemode='a',level=logging.WARNING)
+log = logging.getLogger('Choice Game')
 
-
-class filesave:
+class filesave():
     def retrievesave(self):
         try:
-            with open('save.txt', 'r+') as save:
+            with open('save.txt', 'r') as save:
                 position = int(save.read())
                 list(story[position])
-        except FileNotFoundError:
-            with open('save.txt', 'w+') as save:
-                print('File not found, creating new save...')
+        except FileNotFoundError as ferror:
+            log.warning(f'{datetime.datetime.now()}: Save file was not found, error: {ferror} in Class {self.__class__.__name__}')
+            with open('save.txt', 'w') as save:
                 position = 1
                 save.write(str(position))
-        except KeyError:
-            with open('save.txt', 'r+') as save:
-                print('invalid save value, resetting')
+        except KeyError as kerror:
+            log.warning(f'{datetime.datetime.now()}: Invalid save value, resetting, Key of value {kerror} was not found in {dragons_story} dictionnary, in Class {self.__class__.__name__}')
+            with open('save.txt', 'w') as save:
                 position = 1
-                save.truncate(0)
                 save.write(str(position))
         finally:
             return position
     def saveposition(self,position):
         try:
-            with open('save.txt', 'r+') as save:
-                save.seek(0)
+            with open('save.txt', 'w') as save:
                 save.write(str(position))
-        except IOError:
-            with open('save.txt', 'w+') as save:
-                save.truncate(0)
+        except OSError as oserror:
+            log.warning(f'{datetime.datetime.now()}: The OS threw the error: {oserror}, in Class {self.__class__.__name__}')
+            with open('save.txt', 'w') as save:
                 save.write(str(position))
             
 
